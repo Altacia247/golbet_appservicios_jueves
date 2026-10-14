@@ -1,7 +1,9 @@
 ﻿using GolBet.Entities.Enums;
+using GolBet.Repositories.Data;
 using GolBet.Services.DTOs;
 using GolBet.Services.Implementations;
 using GolBet.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -36,18 +38,18 @@ public class MatchesController : Controller
     }
 
     // (agregar; requiere inyectar ITeamService en el constructor)
-// SelectList
- 
+    // SelectList
 
 
-// GET /Matches/Create
-public async Task<IActionResult> Create()
+    [Authorize(Roles = DbSeeder.AdminRole)]
+    // GET /Matches/Create
+    public async Task<IActionResult> Create()
 {
     await LoadTeamsAsync();
     return View(new MatchFormDto());
 }
-
-[HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = DbSeeder.AdminRole)]
+    [HttpPost, ValidateAntiForgeryToken]
 public async Task<IActionResult> Create(MatchFormDto dto)
 {
     if (!ModelState.IsValid)
@@ -69,9 +71,9 @@ public async Task<IActionResult> Create(MatchFormDto dto)
         return View(dto);
     }
 }
-
-// GET /Matches/Edit/5
-public async Task<IActionResult> Edit(int id)
+    [Authorize(Roles = DbSeeder.AdminRole)]
+    // GET /Matches/Edit/5
+    public async Task<IActionResult> Edit(int id)
 {
     var dto = await _matchService.GetForEditAsync(id);
     if (dto is null) return NotFound();
@@ -79,9 +81,9 @@ public async Task<IActionResult> Edit(int id)
     await LoadTeamsAsync(); // the form needs the dropdowns too
     return View(dto);
 }
-
-// POST /Matches/Edit
-[HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = DbSeeder.AdminRole)]
+    // POST /Matches/Edit
+    [HttpPost, ValidateAntiForgeryToken]
 public async Task<IActionResult> Edit(MatchFormDto dto)
 {
     if (!ModelState.IsValid)
@@ -103,9 +105,9 @@ public async Task<IActionResult> Edit(MatchFormDto dto)
         return View(dto);
     }
 }
-
-// POST /Matches/Deactivate/5
-[HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = DbSeeder.AdminRole)]
+    // POST /Matches/Deactivate/5
+    [HttpPost, ValidateAntiForgeryToken]
 public async Task<IActionResult> Deactivate(int id)
 {
     await _matchService.DeactivateAsync(id);
