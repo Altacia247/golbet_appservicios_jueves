@@ -137,6 +137,22 @@ public static class DbSeeder
             await userManager.CreateAsync(admin, "Admin123*");
             await userManager.AddToRoleAsync(admin, AdminRole);
         }
+
+        // better user (idempotent)
+        if (await userManager.FindByEmailAsync("better@golbet.com") is null)
+        {
+            var better = new AppUser
+            {
+                UserName = "better@golbet.com",
+                Email = "better@golbet.com",
+                FullName = "Apostador GolBet",
+                Balance = 0m,              // admins manage, they do not bet
+                EmailConfirmed = true
+            };
+
+            await userManager.CreateAsync(better, "Better123*");
+            await userManager.AddToRoleAsync(better, BettorRole);
+        }
     }
 }
 
